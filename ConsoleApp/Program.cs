@@ -26,7 +26,7 @@ namespace ConsoleApp
             //var writer = new BarcodeWriterPixelData() { Format = BarcodeFormat.QR_CODE };
             //var b = writer.Write("000000000");
             //var writer = new QRCodeWriter();
-            var size = 50;
+            var size = 100;
             var margin = 2;
             //var matrix = writer.encode("000000000", BarcodeFormat.QR_CODE, size, size, null);
 
@@ -70,11 +70,17 @@ namespace ConsoleApp
             {
                 Options = new ZXing.Common.DecodingOptions
                 {
-                    PossibleFormats = new List<BarcodeFormat> { BarcodeFormat.DATA_MATRIX }
+                    TryHarder = true,
+                    PossibleFormats = new List<BarcodeFormat> {
+                        //BarcodeFormat.DATA_MATRIX,
+                        BarcodeFormat.QR_CODE,
+                    }
                 }
             };
             // load a bitmap
-            var barcodeBitmap = (Bitmap)Image.FromFile(@"C:\Users\icer\Downloads\20190709_113355.bmp");
+            //var barcodeBitmap = (Bitmap)Image.FromFile(@"C:\Users\icer\Source\repos\QrCodeTest\ConsoleApp\bin\Debug\netcoreapp2.2\0011.png");
+            var barcodeBitmap = (Bitmap)Image.FromFile(@"C:\Users\icer\Downloads\20190709_114838.bmp");
+            //var barcodeBitmap = (Bitmap)Image.FromFile(@"..\..\..\qrtest3.png");
             //// detect and decode the barcode inside the bitmap
             //var result = reader.Decode(barcodeBitmap);
             //// do something with the result
@@ -90,7 +96,7 @@ namespace ConsoleApp
                 LuminanceSource source;
                 source = new BitmapLuminanceSource(barcodeBitmap);
                 BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-                //Result result = new MultiFormatReader().decode(bitmap);
+                //var result = new MultiFormatReader().decode(bitmap);
                 var result = reader.DecodeMultiple(source);
                 //reader.DecodeMultiple()
                 if (result != null)
