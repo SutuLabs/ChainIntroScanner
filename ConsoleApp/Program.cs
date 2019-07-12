@@ -7,6 +7,7 @@ using ZXing.Common;
 using ZXing.QrCode;
 using ZXing.Datamatrix;
 using ZXing.Windows.Compatibility;
+using System;
 
 namespace ConsoleApp
 {
@@ -16,8 +17,15 @@ namespace ConsoleApp
         {
             //Console.WriteLine("Hello World!");
 
-            //Read();
-            Write();
+            var sw = new Stopwatch();
+            sw.Start();
+            for (int i = 0; i < 100; i++)
+            {
+                Read();
+            }
+            sw.Stop();
+            Console.WriteLine(sw.ElapsedMilliseconds);
+            //Write();
         }
 
         private static void Write()
@@ -78,8 +86,8 @@ namespace ConsoleApp
             };
             // load a bitmap
             //var barcodeBitmap = (Bitmap)Image.FromFile(@"C:\Users\icer\Source\repos\QrCodeTest\ConsoleApp\bin\Debug\netcoreapp2.2\0011.png");
-            var barcodeBitmap = (Bitmap)Image.FromFile(@"C:\Users\icer\Downloads\WIN_20190712_13_56_13_Pro.jpg");
-            //var barcodeBitmap = (Bitmap)Image.FromFile(@"..\..\..\qrtest3.png");
+            //var barcodeBitmap = (Bitmap)Image.FromFile(@"C:\Users\icer\Downloads\WIN_20190712_13_56_13_Pro.jpg");
+            var barcodeBitmap = (Bitmap)Image.FromFile(@"..\..\..\qrtest3.png");
             //// detect and decode the barcode inside the bitmap
             //var result = reader.Decode(barcodeBitmap);
             //// do something with the result
@@ -100,7 +108,7 @@ namespace ConsoleApp
                 //reader.DecodeMultiple()
                 if (result != null)
                 {
-                    Debugger.Break();
+                    //Debugger.Break();
                 }
             }
         }
