@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -17,8 +16,8 @@ namespace ConsoleApp
         {
             //Console.WriteLine("Hello World!");
 
-            Read();
-            //Write();
+            //Read();
+            Write();
         }
 
         private static void Write()
@@ -26,20 +25,20 @@ namespace ConsoleApp
             //var writer = new BarcodeWriterPixelData() { Format = BarcodeFormat.QR_CODE };
             //var b = writer.Write("000000000");
             //var writer = new QRCodeWriter();
-            var size = 100;
-            var margin = 2;
+            var size = 80;
+            var margin = 0;
             //var matrix = writer.encode("000000000", BarcodeFormat.QR_CODE, size, size, null);
 
             for (int i = 0; i < 15; i++)
             {
                 var qrCodeWriter = new BarcodeWriterPixelData
                 {
-                    //Format = BarcodeFormat.QR_CODE,
-                    //Options = new QrCodeEncodingOptions { Height = size, Width = size, Margin = margin }
-                    Format = BarcodeFormat.DATA_MATRIX,
-                    Options = new DatamatrixEncodingOptions { Height = size, Width = size, Margin = margin }
+                    Format = BarcodeFormat.QR_CODE,
+                    Options = new QrCodeEncodingOptions { Height = size, Width = size, Margin = margin }
+                    //Format = BarcodeFormat.DATA_MATRIX,
+                    //Options = new DatamatrixEncodingOptions { Height = size, Width = size, Margin = margin }
                 };
-                var pixelData = qrCodeWriter.Write($"00{i}");
+                var pixelData = qrCodeWriter.Write($"b.uchaindb.com/{i:00}");
                 // creating a bitmap from the raw pixel data; if only black and white colors are used it makes no difference
                 // that the pixel data ist BGRA oriented and the bitmap is initialized with RGB
                 using (var bitmap = new Bitmap(pixelData.Width, pixelData.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb))
@@ -79,7 +78,7 @@ namespace ConsoleApp
             };
             // load a bitmap
             //var barcodeBitmap = (Bitmap)Image.FromFile(@"C:\Users\icer\Source\repos\QrCodeTest\ConsoleApp\bin\Debug\netcoreapp2.2\0011.png");
-            var barcodeBitmap = (Bitmap)Image.FromFile(@"C:\Users\icer\Downloads\20190709_114838.bmp");
+            var barcodeBitmap = (Bitmap)Image.FromFile(@"C:\Users\icer\Downloads\WIN_20190712_13_56_13_Pro.jpg");
             //var barcodeBitmap = (Bitmap)Image.FromFile(@"..\..\..\qrtest3.png");
             //// detect and decode the barcode inside the bitmap
             //var result = reader.Decode(barcodeBitmap);
