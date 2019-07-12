@@ -17,15 +17,16 @@ namespace ConsoleApp
         {
             //Console.WriteLine("Hello World!");
 
-            var sw = new Stopwatch();
-            sw.Start();
-            for (int i = 0; i < 100; i++)
-            {
-                Read();
-            }
-            sw.Stop();
-            Console.WriteLine(sw.ElapsedMilliseconds);
-            //Write();
+            //var sw = new Stopwatch();
+            //sw.Start();
+            //for (int i = 0; i < 100; i++)
+            //{
+            //    Read();
+            //}
+            //sw.Stop();
+            //Console.WriteLine(sw.ElapsedMilliseconds);
+
+            Write();
         }
 
         private static void Write()
@@ -46,7 +47,8 @@ namespace ConsoleApp
                     //Format = BarcodeFormat.DATA_MATRIX,
                     //Options = new DatamatrixEncodingOptions { Height = size, Width = size, Margin = margin }
                 };
-                var pixelData = qrCodeWriter.Write($"b.uchaindb.com/{i:00}");
+                //var pixelData = qrCodeWriter.Write($"b.uchaindb.com/{i:00}");
+                var pixelData = qrCodeWriter.Write($"id{i:00000000}");
                 // creating a bitmap from the raw pixel data; if only black and white colors are used it makes no difference
                 // that the pixel data ist BGRA oriented and the bitmap is initialized with RGB
                 using (var bitmap = new Bitmap(pixelData.Width, pixelData.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb))
