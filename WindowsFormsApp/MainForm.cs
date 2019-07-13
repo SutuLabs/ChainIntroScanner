@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Printing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -142,7 +144,7 @@ namespace WindowsFormsApp
                 this.panScanResult.Controls.Add(checkbox);
             }
 
-            this.btnDecodeWebCam_Click(this, null);
+            //this.btnDecodeWebCam_Click(this, null);
         }
 
         private void BtnClear_Click(object sender, EventArgs e)
@@ -151,6 +153,67 @@ namespace WindowsFormsApp
             {
                 this.lstChecked[i].Checked = false;
             }
+        }
+
+        private void BtnPrint_Click(object sender, EventArgs e)
+        {
+            var pdoc = new PrintDocument();
+            pdoc.PrintPage += new PrintPageEventHandler(this.PrintTextFileHandler);
+            var pdlg = new PrintDialog();
+            pdlg.AllowSomePages = true;
+            pdlg.ShowHelp = true;
+            pdlg.Document = pdoc;
+            var result = pdlg.ShowDialog();
+            pdoc.Print();
+        }
+        private void PrintTextFileHandler(object sender, PrintPageEventArgs ppeArgs)
+        {
+            var verdana10Font = new Font("Verdana", 6);
+
+            //Get the Graphics object
+            Graphics g = ppeArgs.Graphics;
+            float linesPerPage = 0;
+            float yPos = 0;
+            int count = 0;
+            //Read margins from PrintPageEventArgs
+            //float leftMargin = ppeArgs.MarginBounds.Left;
+            //float topMargin = ppeArgs.MarginBounds.Top;
+            float leftMargin = 0;
+            float topMargin = 0;
+            string line = null;
+            //Calculate the lines per page on the basis of the height of the page and the height of the font
+            linesPerPage = ppeArgs.MarginBounds.Height / verdana10Font.GetHeight(g);
+
+            var reader = new StreamReader(GenerateStreamFromString("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor "));
+
+            //Now read lines one by one, using StreamReader
+            while (count < linesPerPage && ((line = reader.ReadLine()) != null))
+            {
+                //Calculate the starting position
+                yPos = topMargin + (count * verdana10Font.GetHeight(g));
+                //Draw text
+                g.DrawString(line, verdana10Font, Brushes.Black, leftMargin, yPos, new StringFormat());
+                //Move to next line
+                count++;
+            }
+            //If PrintPageEventArgs has more pages to print
+            if (line != null)
+            {
+                ppeArgs.HasMorePages = true;
+            }
+            else
+            {
+                ppeArgs.HasMorePages = false;
+            }
+        }
+        private static Stream GenerateStreamFromString(string s)
+        {
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
         }
     }
 }

@@ -33,6 +33,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.panScanResult = new System.Windows.Forms.FlowLayoutPanel();
             this.btnClear = new System.Windows.Forms.Button();
+            this.btnPrint = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picWebCam)).BeginInit();
             this.SuspendLayout();
             // 
@@ -79,12 +80,23 @@
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.BtnClear_Click);
             // 
+            // btnPrint
+            // 
+            this.btnPrint.Location = new System.Drawing.Point(37, 360);
+            this.btnPrint.Name = "btnPrint";
+            this.btnPrint.Size = new System.Drawing.Size(141, 42);
+            this.btnPrint.TabIndex = 2;
+            this.btnPrint.Text = "Print";
+            this.btnPrint.UseVisualStyleBackColor = true;
+            this.btnPrint.Click += new System.EventHandler(this.BtnPrint_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.panScanResult);
+            this.Controls.Add(this.btnPrint);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.txtStatus);
@@ -105,6 +117,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.FlowLayoutPanel panScanResult;
         private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnPrint;
     }
 }
 
