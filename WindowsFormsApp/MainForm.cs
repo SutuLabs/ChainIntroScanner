@@ -16,6 +16,29 @@ namespace WindowsFormsApp
         private WebCam wCam;
         private Timer webCamTimer;
         private readonly BarcodeReader barcodeReader;
+        private static Dictionary<int, int> mapIdToCheckNumber = new Dictionary<int, int>()
+        {
+            [0] = 0,
+            [1] = 0,
+            [2] = 0,
+            [3] = 1,
+            [4] = 1,
+            [5] = 2,
+            [6] = 2,
+            [7] = 2,
+            [8] = 3,
+            [9] = 3,
+            [10] = 4,
+            [11] = 4,
+            [12] = 5,
+            [13] = 5,
+            [14] = 6,
+            [15] = 6,
+            [16] = 7,
+            [17] = 7,
+            [18] = 7,
+            [19] = 7,
+        };
 
         public MainForm()
         {
@@ -81,8 +104,9 @@ namespace WindowsFormsApp
                     }
                     else
                     {
-                        var number = int.Parse(item.Text);
-                        this.lstChecked[number].Checked = true;
+                        var text = item.Text.Replace("b.uchaindb.com/", "");
+                        var number = int.Parse(text);
+                        this.lstChecked[mapIdToCheckNumber[number]].Checked = true;
                     }
                 }
 

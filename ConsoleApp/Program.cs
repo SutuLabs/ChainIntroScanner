@@ -34,11 +34,11 @@ namespace ConsoleApp
             //var writer = new BarcodeWriterPixelData() { Format = BarcodeFormat.QR_CODE };
             //var b = writer.Write("000000000");
             //var writer = new QRCodeWriter();
-            var size = 80;
+            var size = 180;
             var margin = 0;
             //var matrix = writer.encode("000000000", BarcodeFormat.QR_CODE, size, size, null);
 
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 30; i++)
             {
                 var qrCodeWriter = new BarcodeWriterPixelData
                 {
@@ -47,8 +47,8 @@ namespace ConsoleApp
                     //Format = BarcodeFormat.DATA_MATRIX,
                     //Options = new DatamatrixEncodingOptions { Height = size, Width = size, Margin = margin }
                 };
-                //var pixelData = qrCodeWriter.Write($"b.uchaindb.com/{i:00}");
-                var pixelData = qrCodeWriter.Write($"id{i:00000000}");
+                var pixelData = qrCodeWriter.Write($"b.uchaindb.com/{i:00}");
+                //var pixelData = qrCodeWriter.Write($"id{i:00000000}");
                 // creating a bitmap from the raw pixel data; if only black and white colors are used it makes no difference
                 // that the pixel data ist BGRA oriented and the bitmap is initialized with RGB
                 using (var bitmap = new Bitmap(pixelData.Width, pixelData.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb))
@@ -68,7 +68,7 @@ namespace ConsoleApp
                     }
                     // save to stream as PNG
                     //bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                    bitmap.Save($"00{i}.png", System.Drawing.Imaging.ImageFormat.Png);
+                    bitmap.Save($"{i:00}.png", System.Drawing.Imaging.ImageFormat.Png);
                 }
             }
         }
