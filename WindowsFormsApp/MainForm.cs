@@ -1,7 +1,10 @@
-﻿using System;
+﻿using CefSharp;
+using CefSharp.WinForms;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.IO;
@@ -18,6 +21,7 @@ namespace WindowsFormsApp
         private WebCam wCam;
         private Timer webCamTimer;
         private readonly BarcodeReader barcodeReader;
+        private ChromiumWebBrowser webBrowser;
         private static Dictionary<int, int> mapIdToCheckNumber = new Dictionary<int, int>()
         {
             [0] = 0,
@@ -45,6 +49,19 @@ namespace WindowsFormsApp
         public MainForm()
         {
             InitializeComponent();
+
+            CefSettings settings = new CefSettings();
+            Cef.Initialize(settings);
+            this.webBrowser = new ChromiumWebBrowser(@"about:blank");
+            //this.webBrowser = new ChromiumWebBrowser(@"C:\Work\1-Blockchain\School\ChainIntro\dist\index.html");
+            this.panWeb.Controls.Add(this.webBrowser);
+            this.webBrowser.Dock = DockStyle.Fill;
+
+            // Allow the use of local resources in the browser
+            var browserSettings = new BrowserSettings();
+            browserSettings.FileAccessFromFileUrls = CefState.Enabled;
+            browserSettings.UniversalAccessFromFileUrls = CefState.Enabled;
+            this.webBrowser.BrowserSettings = browserSettings;
         }
 
 
@@ -95,21 +112,7 @@ namespace WindowsFormsApp
                 foreach (var item in result)
                 {
                     sb.AppendLine($"{item.BarcodeFormat}: {item.Text}");
-                    if (item.Text.StartsWith("id"))
-                    {
-                        this.id = item.Text;
-                        this.idCheck.Checked = true;
-                        for (int i = 0; i < 8; i++)
-                        {
-                            this.lstChecked[i].Checked = false;
-                        }
-                    }
-                    else
-                    {
-                        var text = item.Text.Replace("b.uchaindb.com/", "");
-                        var number = int.Parse(text);
-                        this.lstChecked[mapIdToCheckNumber[number]].Checked = true;
-                    }
+                    CheckResult(item.Text);
                 }
 
                 txtStatus.Text = sb.ToString() + Environment.NewLine + txtStatus.Text;
@@ -119,11 +122,57 @@ namespace WindowsFormsApp
             }
         }
 
+        private void CheckResult(string text)
+        {
+            if (text.StartsWith("id"))
+            {
+                this.id = text;
+                this.idCheck.Checked = true;
+            }
+            else
+            {
+                var ntext = text.Replace("b.uchaindb.com/", "");
+                if (int.TryParse(ntext, out var number))
+                {
+                    this.lstChecked[mapIdToCheckNumber[number]].Checked = true;
+                    this.lstResult[mapIdToCheckNumber[number]] = number;
+                    if (!reportFinished && this.lstChecked.All(_ => _.Checked))
+                    {
+                        this.FinishReport();
+                    }
+                }
+            }
+        }
+
+        bool reportFinished = false;
+        private void FinishReport()
+        {
+            var ids = string.Join(",", this.lstResult);
+            var url = $@"C:\Work\1-Blockchain\School\ChainIntro\dist\index.html#/?a=%5B{ids}%5D&mode=arch";
+            this.Navigate(url);
+            this.reportFinished = true;
+        }
+
+        private void ClearAllChecks()
+        {
+            this.Navigate(@"about:blank");
+            reportFinished = false;
+            this.idCheck.Checked = false;
+            for (int i = 0; i < 8; i++)
+            {
+                this.lstChecked[i].Checked = false;
+            }
+        }
+
         List<CheckBox> lstChecked = new List<CheckBox>();
+        int[] lstResult = new int[8];
         CheckBox idCheck;
         string id;
+
         private void MainForm_Load(object sender, EventArgs e)
         {
+            this.webBrowser.IsBrowserInitializedChanged += WebBrowser_IsBrowserInitializedChanged;
+            this.webBrowser.LoadError += WebBrowser_LoadError;
             this.idCheck = new CheckBox()
             {
                 Text = "id",
@@ -144,15 +193,33 @@ namespace WindowsFormsApp
                 this.panScanResult.Controls.Add(checkbox);
             }
 
-            //this.btnDecodeWebCam_Click(this, null);
+            this.btnDecodeWebCam_Click(this, null);
+        }
+
+        private void WebBrowser_LoadError(object sender, LoadErrorEventArgs e)
+        {
+            if (Debugger.IsAttached) Debugger.Break();
+        }
+
+        private void WebBrowser_IsBrowserInitializedChanged(object sender, IsBrowserInitializedChangedEventArgs e)
+        {
+            //this.webBrowser.Load(@"file:///C:/Work/1-Blockchain/School/ChainIntro/dist/index.html#/?a=%5B1,3,8,10,6,12,14,16%5D&e=%5B%5D&mode=arch");
+            //this.webBrowser.Load(@"C:\Work\1-Blockchain\School\ChainIntro\dist\index.html#/?a=%5B1,3,8,10,6,12,14,16%5D&e=%5B%5D&mode=arch");
+            //this.webBrowser.ShowDevTools();
+        }
+
+        private void Navigate(string url)
+        {
+            this.webBrowser.Invoke((Action)(() =>
+            {
+                this.webBrowser.Load(url);
+            }));
+
         }
 
         private void BtnClear_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < 8; i++)
-            {
-                this.lstChecked[i].Checked = false;
-            }
+            this.ClearAllChecks();
         }
 
         private void BtnPrint_Click(object sender, EventArgs e)
@@ -214,6 +281,11 @@ namespace WindowsFormsApp
             writer.Flush();
             stream.Position = 0;
             return stream;
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Cef.Shutdown();
         }
     }
 }

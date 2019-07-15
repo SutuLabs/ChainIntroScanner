@@ -34,6 +34,7 @@
             this.panScanResult = new System.Windows.Forms.FlowLayoutPanel();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnPrint = new System.Windows.Forms.Button();
+            this.panWeb = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.picWebCam)).BeginInit();
             this.SuspendLayout();
             // 
@@ -55,7 +56,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(37, 248);
+            this.button1.Location = new System.Drawing.Point(22, 206);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(141, 42);
             this.button1.TabIndex = 2;
@@ -67,7 +68,7 @@
             // 
             this.panScanResult.Location = new System.Drawing.Point(653, 21);
             this.panScanResult.Name = "panScanResult";
-            this.panScanResult.Size = new System.Drawing.Size(116, 381);
+            this.panScanResult.Size = new System.Drawing.Size(116, 313);
             this.panScanResult.TabIndex = 3;
             // 
             // btnClear
@@ -82,7 +83,7 @@
             // 
             // btnPrint
             // 
-            this.btnPrint.Location = new System.Drawing.Point(37, 360);
+            this.btnPrint.Location = new System.Drawing.Point(187, 219);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(141, 42);
             this.btnPrint.TabIndex = 2;
@@ -90,11 +91,22 @@
             this.btnPrint.UseVisualStyleBackColor = true;
             this.btnPrint.Click += new System.EventHandler(this.BtnPrint_Click);
             // 
+            // panWeb
+            // 
+            this.panWeb.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panWeb.Location = new System.Drawing.Point(23, 355);
+            this.panWeb.Name = "panWeb";
+            this.panWeb.Size = new System.Drawing.Size(760, 214);
+            this.panWeb.TabIndex = 4;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(800, 575);
+            this.Controls.Add(this.panWeb);
             this.Controls.Add(this.panScanResult);
             this.Controls.Add(this.btnPrint);
             this.Controls.Add(this.btnClear);
@@ -103,6 +115,7 @@
             this.Controls.Add(this.picWebCam);
             this.Name = "MainForm";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.picWebCam)).EndInit();
             this.ResumeLayout(false);
@@ -118,6 +131,7 @@
         private System.Windows.Forms.FlowLayoutPanel panScanResult;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnPrint;
+        private System.Windows.Forms.Panel panWeb;
     }
 }
 
