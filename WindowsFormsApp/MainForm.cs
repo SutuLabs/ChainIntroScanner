@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ZXing;
+using ZXing.QrCode;
 
 namespace WindowsFormsApp
 {
@@ -87,7 +88,7 @@ namespace WindowsFormsApp
             }
         }
 
-        void webCamTimer_Tick(object sender, EventArgs e)
+        async void webCamTimer_Tick(object sender, EventArgs e)
         {
             var bitmap = wCam.GetCurrentImage();
             if (bitmap == null)
@@ -112,7 +113,7 @@ namespace WindowsFormsApp
                 foreach (var item in result)
                 {
                     sb.AppendLine($"{item.BarcodeFormat}: {item.Text}");
-                    CheckResult(item.Text);
+                    await CheckResultAsync(item.Text);
                 }
 
                 txtStatus.Text = sb.ToString() + Environment.NewLine + txtStatus.Text;
@@ -122,7 +123,7 @@ namespace WindowsFormsApp
             }
         }
 
-        private void CheckResult(string text)
+        private async Task CheckResultAsync(string text)
         {
             if (text.StartsWith("id"))
             {
@@ -138,19 +139,20 @@ namespace WindowsFormsApp
                     this.lstResult[mapIdToCheckNumber[number]] = number;
                     if (!reportFinished && this.lstChecked.All(_ => _.Checked))
                     {
-                        this.FinishReport();
+                        await this.FinishReportAsync();
                     }
                 }
             }
         }
 
         bool reportFinished = false;
-        private void FinishReport()
+        string ids = null;
+        private async Task FinishReportAsync()
         {
-            var ids = string.Join(",", this.lstResult);
+            this.reportFinished = true;
+            this.ids = string.Join(",", this.lstResult);
             var url = $@"C:\Work\1-Blockchain\School\ChainIntro\dist\index.html#/?a=%5B{ids}%5D&mode=arch";
             this.Navigate(url);
-            this.reportFinished = true;
         }
 
         private void ClearAllChecks()
@@ -173,6 +175,8 @@ namespace WindowsFormsApp
         {
             this.webBrowser.IsBrowserInitializedChanged += WebBrowser_IsBrowserInitializedChanged;
             this.webBrowser.LoadError += WebBrowser_LoadError;
+            this.webBrowser.FrameLoadEnd += WebBrowser_FrameLoadEnd;
+            this.webBrowser.LoadingStateChanged += WebBrowser_LoadingStateChanged;
             this.idCheck = new CheckBox()
             {
                 Text = "id",
@@ -196,6 +200,34 @@ namespace WindowsFormsApp
             this.btnDecodeWebCam_Click(this, null);
         }
 
+        private string resultName;
+        private string resultDesc;
+        private double resultSimilarity;
+        private string resultUrl;
+        private bool resultDone = false;
+        private void WebBrowser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
+        {
+        }
+
+        private void WebBrowser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
+        {
+            if (reportFinished && e.Frame.IsMain)
+            {
+                this.webBrowser.Invoke((Action)(async () =>
+                {
+                    var ret = await this.webBrowser.GetMainFrame().EvaluateScriptAsync("getSimilarity()");
+
+                    dynamic obj = ret.Result;
+                    this.resultName = obj.name;
+                    this.resultDesc = obj.desc;
+                    this.resultSimilarity = obj.similarity;
+                    this.resultUrl = obj.url;
+                    this.resultDone = true;
+                }));
+
+            }
+        }
+
         private void WebBrowser_LoadError(object sender, LoadErrorEventArgs e)
         {
             if (Debugger.IsAttached) Debugger.Break();
@@ -206,6 +238,41 @@ namespace WindowsFormsApp
             //this.webBrowser.Load(@"file:///C:/Work/1-Blockchain/School/ChainIntro/dist/index.html#/?a=%5B1,3,8,10,6,12,14,16%5D&e=%5B%5D&mode=arch");
             //this.webBrowser.Load(@"C:\Work\1-Blockchain\School\ChainIntro\dist\index.html#/?a=%5B1,3,8,10,6,12,14,16%5D&e=%5B%5D&mode=arch");
             //this.webBrowser.ShowDevTools();
+        }
+
+        private Bitmap GenQrCode(int size, string url)
+        {
+            var margin = 0;
+
+            var qrCodeWriter = new BarcodeWriterPixelData
+            {
+                Format = BarcodeFormat.QR_CODE,
+                Options = new QrCodeEncodingOptions
+                {
+                    Height = size,
+                    Width = size,
+                    Margin = margin,
+                    ErrorCorrection = ZXing.QrCode.Internal.ErrorCorrectionLevel.H
+                }
+            };
+            var pixelData = qrCodeWriter.Write(url);
+            //var pixelData = qrCodeWriter.Write($"http://b.uchaindb.com/#/?a=%5B{ids}%5D&mode=arch");
+            var bitmap = new Bitmap(pixelData.Width, pixelData.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            var bitmapData = bitmap.LockBits(
+                new Rectangle(0, 0, pixelData.Width, pixelData.Height),
+                System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            try
+            {
+                // we assume that the row stride of the bitmap is aligned to 4 byte multiplied by the width of the image
+                System.Runtime.InteropServices.Marshal.Copy(pixelData.Pixels, 0, bitmapData.Scan0,
+                pixelData.Pixels.Length);
+            }
+            finally
+            {
+                bitmap.UnlockBits(bitmapData);
+            }
+
+            return bitmap;
         }
 
         private void Navigate(string url)
@@ -224,55 +291,66 @@ namespace WindowsFormsApp
 
         private void BtnPrint_Click(object sender, EventArgs e)
         {
+            if (!this.resultDone) return;
             var pdoc = new PrintDocument();
             pdoc.PrintPage += new PrintPageEventHandler(this.PrintTextFileHandler);
             var pdlg = new PrintDialog();
             pdlg.AllowSomePages = true;
             pdlg.ShowHelp = true;
             pdlg.Document = pdoc;
-            var result = pdlg.ShowDialog();
+            pdoc.PrinterSettings.PrinterName = "XP-58";
+            //var result = pdlg.ShowDialog();
             pdoc.Print();
         }
         private void PrintTextFileHandler(object sender, PrintPageEventArgs ppeArgs)
         {
-            var verdana10Font = new Font("Verdana", 6);
+            var yhsmall = new Font("Microsoft YaHei", 7);
+            var yhnormal = new Font("Microsoft YaHei", 8);
+            var yhbig = new Font("Microsoft YaHei", 13);
 
-            //Get the Graphics object
-            Graphics g = ppeArgs.Graphics;
-            float linesPerPage = 0;
+            var g = ppeArgs.Graphics;
             float yPos = 0;
-            int count = 0;
-            //Read margins from PrintPageEventArgs
-            //float leftMargin = ppeArgs.MarginBounds.Left;
-            //float topMargin = ppeArgs.MarginBounds.Top;
             float leftMargin = 0;
             float topMargin = 0;
-            string line = null;
-            //Calculate the lines per page on the basis of the height of the page and the height of the font
-            linesPerPage = ppeArgs.MarginBounds.Height / verdana10Font.GetHeight(g);
 
-            var reader = new StreamReader(GenerateStreamFromString("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor "));
+            int paperWidth = 178;
+            int qrcodesize = 130;
 
-            //Now read lines one by one, using StreamReader
-            while (count < linesPerPage && ((line = reader.ReadLine()) != null))
-            {
-                //Calculate the starting position
-                yPos = topMargin + (count * verdana10Font.GetHeight(g));
-                //Draw text
-                g.DrawString(line, verdana10Font, Brushes.Black, leftMargin, yPos, new StringFormat());
-                //Move to next line
-                count++;
-            }
-            //If PrintPageEventArgs has more pages to print
-            if (line != null)
-            {
-                ppeArgs.HasMorePages = true;
-            }
-            else
-            {
-                ppeArgs.HasMorePages = false;
-            }
+
+            yPos += topMargin;
+
+            var height = 0;
+
+            height = DrawText("与你的选择最相似的是:", yhsmall, g, yPos, leftMargin, paperWidth, 20);
+            yPos += height;
+
+            height = DrawText(this.resultName, yhbig, g, yPos, leftMargin, paperWidth, 20);
+            yPos += height;
+
+            height = DrawText($"相似度：{this.resultSimilarity * 100}%", yhsmall, g, yPos, leftMargin, paperWidth, 20);
+            yPos += height;
+
+            height = DrawText(this.resultDesc, yhnormal, g, yPos, leftMargin, 189, 200);
+            yPos += height;
+
+            var qrcode = GenQrCode(qrcodesize, this.resultUrl);
+            g.DrawImage(qrcode, new PointF(leftMargin + (paperWidth - qrcodesize) / 2, yPos));
+            yPos += qrcodesize;
+
+            height = DrawText("（扫描二维码查看完整详细的报告） ", yhsmall, g, yPos, leftMargin + 10, paperWidth, 20);
+            yPos += height;
+
+            ppeArgs.HasMorePages = false;
         }
+
+        private int DrawText(string text, Font font, Graphics g, float y, float x, int width, int maxHeight = 0, StringAlignment alignment = StringAlignment.Near)
+        {
+            var size = TextRenderer.MeasureText(text, font, new Size(width, maxHeight), TextFormatFlags.WordBreak);
+            g.DrawString(text, font, Brushes.Black, new RectangleF(x, y, size.Width, size.Height),
+                new StringFormat() { Alignment = alignment });
+            return size.Height;
+        }
+
         private static Stream GenerateStreamFromString(string s)
         {
             var stream = new MemoryStream();
