@@ -229,6 +229,7 @@
             this.resultDone = false;
             this.btnPrint.Invoke((Action)(() =>
             {
+                this.btnPrint.BackColor = SystemColors.Control;
                 this.btnPrint.Enabled = false;
             }));
         }
@@ -238,6 +239,7 @@
             this.resultDone = true;
             this.btnPrint.Invoke((Action)(() =>
             {
+                this.btnPrint.BackColor = Color.FromArgb(192, 192, 255);
                 this.btnPrint.Enabled = true;
             }));
         }
@@ -297,6 +299,11 @@
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             Cef.Shutdown();
+        }
+
+        private void BtnToggleStatus_Click(object sender, EventArgs e)
+        {
+            this.txtStatus.Visible = !this.txtStatus.Visible;
         }
     }
 }

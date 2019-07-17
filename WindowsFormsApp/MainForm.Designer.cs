@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.picWebCam = new System.Windows.Forms.PictureBox();
             this.txtStatus = new System.Windows.Forms.TextBox();
             this.btnToggleCamScan = new System.Windows.Forms.Button();
@@ -36,6 +37,7 @@
             this.btnPrint = new System.Windows.Forms.Button();
             this.panWeb = new System.Windows.Forms.Panel();
             this.panWatch = new System.Windows.Forms.Panel();
+            this.btnToggleStatus = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picWebCam)).BeginInit();
             this.panWatch.SuspendLayout();
             this.SuspendLayout();
@@ -44,7 +46,7 @@
             // 
             this.picWebCam.Location = new System.Drawing.Point(8, 3);
             this.picWebCam.Name = "picWebCam";
-            this.picWebCam.Size = new System.Drawing.Size(218, 192);
+            this.picWebCam.Size = new System.Drawing.Size(201, 192);
             this.picWebCam.TabIndex = 0;
             this.picWebCam.TabStop = false;
             // 
@@ -53,15 +55,16 @@
             this.txtStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStatus.Location = new System.Drawing.Point(458, 8);
+            this.txtStatus.Location = new System.Drawing.Point(8, 399);
             this.txtStatus.Multiline = true;
             this.txtStatus.Name = "txtStatus";
-            this.txtStatus.Size = new System.Drawing.Size(223, 187);
+            this.txtStatus.Size = new System.Drawing.Size(201, 137);
             this.txtStatus.TabIndex = 1;
+            this.txtStatus.Visible = false;
             // 
             // btnToggleCamScan
             // 
-            this.btnToggleCamScan.Location = new System.Drawing.Point(360, 8);
+            this.btnToggleCamScan.Location = new System.Drawing.Point(136, 206);
             this.btnToggleCamScan.Name = "btnToggleCamScan";
             this.btnToggleCamScan.Size = new System.Drawing.Size(73, 42);
             this.btnToggleCamScan.TabIndex = 2;
@@ -71,14 +74,14 @@
             // 
             // panScanResult
             // 
-            this.panScanResult.Location = new System.Drawing.Point(232, 3);
+            this.panScanResult.Location = new System.Drawing.Point(8, 201);
             this.panScanResult.Name = "panScanResult";
             this.panScanResult.Size = new System.Drawing.Size(122, 192);
             this.panScanResult.TabIndex = 3;
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(360, 104);
+            this.btnClear.Location = new System.Drawing.Point(136, 302);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(73, 42);
             this.btnClear.TabIndex = 2;
@@ -88,12 +91,13 @@
             // 
             // btnPrint
             // 
-            this.btnPrint.Location = new System.Drawing.Point(360, 56);
+            this.btnPrint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.btnPrint.Location = new System.Drawing.Point(136, 254);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(73, 42);
             this.btnPrint.TabIndex = 2;
             this.btnPrint.Text = "打印";
-            this.btnPrint.UseVisualStyleBackColor = true;
+            this.btnPrint.UseVisualStyleBackColor = false;
             this.btnPrint.Click += new System.EventHandler(this.BtnPrint_Click);
             // 
             // panWeb
@@ -101,35 +105,47 @@
             this.panWeb.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panWeb.Location = new System.Drawing.Point(1, 221);
+            this.panWeb.Location = new System.Drawing.Point(237, 12);
             this.panWeb.Name = "panWeb";
-            this.panWeb.Size = new System.Drawing.Size(721, 505);
+            this.panWeb.Size = new System.Drawing.Size(664, 548);
             this.panWeb.TabIndex = 4;
             // 
             // panWatch
             // 
-            this.panWatch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panWatch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.panWatch.Controls.Add(this.picWebCam);
             this.panWatch.Controls.Add(this.panScanResult);
             this.panWatch.Controls.Add(this.btnToggleCamScan);
             this.panWatch.Controls.Add(this.btnPrint);
             this.panWatch.Controls.Add(this.txtStatus);
+            this.panWatch.Controls.Add(this.btnToggleStatus);
             this.panWatch.Controls.Add(this.btnClear);
             this.panWatch.Location = new System.Drawing.Point(12, 12);
             this.panWatch.Name = "panWatch";
-            this.panWatch.Size = new System.Drawing.Size(697, 203);
+            this.panWatch.Size = new System.Drawing.Size(219, 548);
             this.panWatch.TabIndex = 4;
+            // 
+            // btnToggleStatus
+            // 
+            this.btnToggleStatus.Location = new System.Drawing.Point(136, 370);
+            this.btnToggleStatus.Name = "btnToggleStatus";
+            this.btnToggleStatus.Size = new System.Drawing.Size(73, 23);
+            this.btnToggleStatus.TabIndex = 2;
+            this.btnToggleStatus.Text = "↓↓↓";
+            this.btnToggleStatus.UseVisualStyleBackColor = true;
+            this.btnToggleStatus.Click += new System.EventHandler(this.BtnToggleStatus_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(721, 725);
+            this.ClientSize = new System.Drawing.Size(913, 572);
             this.Controls.Add(this.panWatch);
             this.Controls.Add(this.panWeb);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
-            this.Text = "Form1";
+            this.Text = "区块链架构设计工具";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.picWebCam)).EndInit();
@@ -149,6 +165,7 @@
         private System.Windows.Forms.Button btnPrint;
         private System.Windows.Forms.Panel panWeb;
         private System.Windows.Forms.Panel panWatch;
+        private System.Windows.Forms.Button btnToggleStatus;
     }
 }
 
