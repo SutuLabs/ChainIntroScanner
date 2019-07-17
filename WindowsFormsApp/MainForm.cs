@@ -47,6 +47,19 @@ namespace WindowsFormsApp
             [19] = 7,
         };
 
+        private static Dictionary<int, string> mapIdToName = new Dictionary<int, string>()
+        {
+            [0] = "代币机制",
+            [1] = "账本模式",
+            [2] = "数字摘要",
+            [3] = "数字签名",
+            [4] = "智能合约",
+            [5] = "权限控制",
+            [6] = "接口设计",
+            [7] = "共识机制",
+        };
+
+
         public MainForm()
         {
             InitializeComponent();
@@ -127,8 +140,8 @@ namespace WindowsFormsApp
         {
             if (text.StartsWith("id"))
             {
-                this.id = text;
-                this.idCheck.Checked = true;
+                //this.id = text;
+                //this.idCheck.Checked = true;
             }
             else
             {
@@ -151,7 +164,7 @@ namespace WindowsFormsApp
         {
             this.reportFinished = true;
             this.ids = string.Join(",", this.lstResult);
-            var url = $@"C:\Work\1-Blockchain\School\ChainIntro\dist\index.html#/?a=%5B{ids}%5D&mode=arch";
+            var url = $@"C:\Work\1-Blockchain\School\ChainIntro\dist\index.html#/?a=%5B{ids}%5D&mode=report";
             this.Navigate(url);
         }
 
@@ -159,7 +172,7 @@ namespace WindowsFormsApp
         {
             this.Navigate(@"about:blank");
             reportFinished = false;
-            this.idCheck.Checked = false;
+            //this.idCheck.Checked = false;
             for (int i = 0; i < 8; i++)
             {
                 this.lstChecked[i].Checked = false;
@@ -168,8 +181,8 @@ namespace WindowsFormsApp
 
         List<CheckBox> lstChecked = new List<CheckBox>();
         int[] lstResult = new int[8];
-        CheckBox idCheck;
-        string id;
+        //CheckBox idCheck;
+        //string id;
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -177,21 +190,23 @@ namespace WindowsFormsApp
             this.webBrowser.LoadError += WebBrowser_LoadError;
             this.webBrowser.FrameLoadEnd += WebBrowser_FrameLoadEnd;
             this.webBrowser.LoadingStateChanged += WebBrowser_LoadingStateChanged;
-            this.idCheck = new CheckBox()
-            {
-                Text = "id",
-                Enabled = false,
-                Checked = false,
-            };
-            this.panScanResult.Controls.Add(this.idCheck);
+            //this.idCheck = new CheckBox()
+            //{
+            //    Text = "id",
+            //    Enabled = false,
+            //    Checked = false,
+            //};
+            //this.panScanResult.Controls.Add(this.idCheck);
 
             for (int i = 0; i < 8; i++)
             {
                 var checkbox = new CheckBox()
                 {
-                    Text = $"Num {i}",
+                    Text = mapIdToName[i],
                     Enabled = false,
                     Checked = false,
+                    BackColor = Color.Wheat,
+                    Margin=new Padding(0),
                 };
                 this.lstChecked.Add(checkbox);
                 this.panScanResult.Controls.Add(checkbox);
