@@ -2,12 +2,15 @@
 {
     using CefSharp;
     using CefSharp.WinForms;
+    using Microsoft.CSharp.RuntimeBinder;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Drawing;
+    using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Windows.Forms;
     using ZXing;
 
@@ -49,7 +52,7 @@
             [7] = "共识机制",
         };
 
-        private const string baseUrl = @"C:\Work\1-Blockchain\School\ChainIntro\dist\index.html";
+        private const string baseUrl = @"site\index.html";
         private const string blankPageUrl = @"about:blank";
         private readonly BarcodeReader barcodeReader;
         private WebCam wCam;
@@ -168,9 +171,14 @@
                     CheckResult(item.Text);
                 }
 
-                txtStatus.Text = sb.ToString() + Environment.NewLine + txtStatus.Text;
-                txtStatus.Text = txtStatus.Text.Substring(0, txtStatus.Text.Length > 1000 ? 1000 : txtStatus.Text.Length);
+                AddStatus(sb.ToString());
             }
+        }
+
+        private void AddStatus(string txt)
+        {
+            txtStatus.Text = txt + Environment.NewLine + txtStatus.Text;
+            txtStatus.Text = txtStatus.Text.Substring(0, txtStatus.Text.Length > 1000 ? 1000 : txtStatus.Text.Length);
         }
 
         private void CheckResult(string text)
@@ -182,7 +190,7 @@
             }
             else
             {
-                var ntext = text.Replace("b.uchaindb.com/", "");
+                var ntext = Regex.Replace(text, "[^0-9]", "");
                 if (int.TryParse(ntext, out var number))
                 {
                     this.lstChecked[mapIdToCheckNumber[number]].Checked = true;
@@ -199,7 +207,9 @@
         {
             this.reportFinished = true;
             var ids = string.Join(",", this.lstResult);
-            var url = $@"{baseUrl}#/?a=%5B{ids}%5D&mode=report";
+            var location = Path.GetDirectoryName(Application.ExecutablePath);
+            var path = Path.Combine(location, baseUrl);
+            var url = $@"{path}#/?a=%5B{ids}%5D&mode=report";
             this.Navigate(url);
         }
 
@@ -240,12 +250,19 @@
                 {
                     var ret = await this.webBrowser.GetMainFrame().EvaluateScriptAsync("getSimilarity()");
 
-                    dynamic obj = ret.Result;
-                    this.resultName = obj.name;
-                    this.resultDesc = obj.desc;
-                    this.resultSimilarity = obj.similarity;
-                    this.resultUrl = obj.url;
-                    EnablePrint();
+                    try
+                    {
+                        dynamic obj = ret.Result;
+                        this.resultName = obj.name;
+                        this.resultDesc = obj.desc;
+                        this.resultSimilarity = obj.similarity;
+                        this.resultUrl = obj.url;
+                        EnablePrint();
+                    }
+                    catch (RuntimeBinderException rbex)
+                    {
+                        this.AddStatus("Cannot resolve dynamic: " + rbex.Message);
+                    }
                 }));
             }
         }
