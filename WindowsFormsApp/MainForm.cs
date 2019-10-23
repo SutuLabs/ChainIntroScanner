@@ -114,6 +114,8 @@
                     Checked = false,
                     BackColor = Color.Wheat,
                     Margin = new Padding(0),
+                    AutoSize = true,
+                    Font = new Font(this.panScanResult.Font.FontFamily, 16F),
                 };
                 this.lstChecked.Add(checkbox);
                 this.panScanResult.Controls.Add(checkbox);
@@ -187,6 +189,11 @@
             {
                 //this.id = text;
                 //this.idCheck.Checked = true;
+            }
+            else if (text.StartsWith("clean"))
+            {
+                this.ClearAllChecks();
+                this.DisablePrint();
             }
             else
             {
