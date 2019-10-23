@@ -181,8 +181,11 @@
 
         private void AddStatus(string txt)
         {
-            txtStatus.Text = txt + Environment.NewLine + txtStatus.Text;
-            txtStatus.Text = txtStatus.Text.Substring(0, txtStatus.Text.Length > 1000 ? 1000 : txtStatus.Text.Length);
+            this.btnPrint.Invoke((Action)(() =>
+            {
+                var t = txt + Environment.NewLine + txtStatus.Text;
+                txtStatus.Text = t.Substring(0, t.Length > 1000 ? 1000 : t.Length);
+            }));
         }
 
         private void CheckResult(string text)
