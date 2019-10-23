@@ -54,6 +54,8 @@
 
         private const string baseUrl = @"site\index.html";
         private const string blankPageUrl = @"about:blank";
+        private readonly Color OptionUncheckColor = Color.Wheat;
+        private readonly Color OptionCheckColor = Color.AliceBlue;
         private readonly BarcodeReader barcodeReader;
         private WebCam wCam;
         private Timer webCamTimer;
@@ -112,7 +114,7 @@
                     Text = mapIdToName[i],
                     Enabled = false,
                     Checked = false,
-                    BackColor = Color.Wheat,
+                    BackColor = OptionUncheckColor,
                     Margin = new Padding(0),
                     AutoSize = true,
                     Font = new Font(this.panScanResult.Font.FontFamily, 16F),
@@ -201,6 +203,7 @@
                 if (int.TryParse(ntext, out var number))
                 {
                     this.lstChecked[mapIdToCheckNumber[number]].Checked = true;
+                    this.lstChecked[mapIdToCheckNumber[number]].BackColor = OptionCheckColor;
                     this.lstResult[mapIdToCheckNumber[number]] = number;
                     if (!reportFinished && this.lstChecked.All(_ => _.Checked))
                     {
@@ -228,6 +231,7 @@
             for (int i = 0; i < 8; i++)
             {
                 this.lstChecked[i].Checked = false;
+                this.lstChecked[i].BackColor = OptionUncheckColor;
             }
         }
 
