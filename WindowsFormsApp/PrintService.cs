@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Printing;
 using System.Windows.Forms;
 using ZXing;
@@ -36,7 +37,15 @@ namespace WindowsFormsApp
             {
                 pdoc.PrinterSettings.PrinterName = defaultPrinter;
             }
-            pdoc.Print();
+
+            try
+            {
+                pdoc.Print();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error in print: {ex.ToString()}");
+            }
         }
 
         private Bitmap GenQrCode(int size, string url)

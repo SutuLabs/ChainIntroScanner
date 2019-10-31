@@ -255,6 +255,7 @@
             {
                 this.btnPrint.BackColor = Color.FromArgb(192, 192, 255);
                 this.btnPrint.Enabled = true;
+                this.btnPrint.Focus();
             }));
         }
 
