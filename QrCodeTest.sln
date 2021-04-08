@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{A103BD81-5D31-4193-87F9-65A09386F0ED}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApp", "WindowsFormsApp\WindowsFormsApp.csproj", "{83B01574-6D4F-477F-91A4-EE4D57BF3BD1}"
 EndProject
 Global
@@ -13,10 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A103BD81-5D31-4193-87F9-65A09386F0ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A103BD81-5D31-4193-87F9-65A09386F0ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A103BD81-5D31-4193-87F9-65A09386F0ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A103BD81-5D31-4193-87F9-65A09386F0ED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{83B01574-6D4F-477F-91A4-EE4D57BF3BD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{83B01574-6D4F-477F-91A4-EE4D57BF3BD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83B01574-6D4F-477F-91A4-EE4D57BF3BD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
